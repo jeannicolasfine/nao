@@ -198,6 +198,22 @@ export const settingsSearchIndex: SettingsSearchEntry[] = [
 		keywords: ['slack bot', 'slack app', 'slack webhook', 'messaging'],
 		adminOnly: true,
 	},
+	{
+		page: '/settings/project/slack',
+		pageLabel: 'Slack',
+		title: 'Slack transport mode',
+		description: 'Switch between Webhook and Socket Mode for Slack delivery.',
+		keywords: [
+			'slack socket mode',
+			'slack websocket',
+			'private vpc',
+			'air-gapped',
+			'firewall',
+			'app token',
+			'xapp',
+		],
+		adminOnly: true,
+	},
 
 	// ── Project > Microsoft Teams ────────────────────────────
 	{

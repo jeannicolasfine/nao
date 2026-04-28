@@ -36,11 +36,16 @@ export type StreamState = {
 
 export type Provider = 'slack' | 'teams' | 'telegram' | 'whatsapp';
 
+export const SLACK_TRANSPORT_MODES = ['webhook', 'socket'] as const;
+export type SlackTransportMode = (typeof SLACK_TRANSPORT_MODES)[number];
+
 export type SlackSettings = {
 	slackBotToken: string;
 	slackSigningSecret: string;
 	slackllmProvider: string;
 	slackllmModelId: string;
+	slackTransportMode?: SlackTransportMode;
+	slackAppToken?: string;
 };
 
 export type TeamsSettings = {
