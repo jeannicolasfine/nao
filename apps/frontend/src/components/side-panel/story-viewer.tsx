@@ -20,6 +20,7 @@ import { useStoryViewerViewMode } from './hooks/use-story-viewer-view-mode';
 import type { Editor as TiptapEditor } from '@tiptap/react';
 import { useSidePanel } from '@/contexts/side-panel';
 import { ReadonlyAgentMessagesProvider, useOptionalAgentContext } from '@/contexts/agent.provider';
+import { StoryChartEditProvider } from '@/contexts/story-chart-edit';
 import { Spinner } from '@/components/ui/spinner';
 import { chatActivityStore } from '@/stores/chat-activity';
 import { trpc } from '@/main';
@@ -169,18 +170,27 @@ export function StoryViewer({ chatId, storySlug, isReadonlyMode: readonlyProp }:
 			{Boolean(archivedAt) && <ArchivedBanner chatId={chatId} storySlug={resolvedStorySlug} />}
 
 			<div ref={scrollContainerRef} className='flex-1 min-h-0 overflow-auto'>
-				{viewMode === 'preview' ? (
-					<StoryPreview
-						code={storyCode}
-						cacheSchedule={cacheSchedule}
-						queryData={queryData ?? null}
-						chatId={chatId}
-						versionKey={`${currentVersionNumber}-${cachedAt ?? ''}`}
-					/>
-				) : viewMode === 'edit' ? (
-					<StoryEditor code={storyCode} editorRef={tiptapEditorRef} onSave={handleSave} />
-				) : (
-					<StoryCodeView code={storyCode} />
+				{renderWithEditProvider(
+					!isReadonlyMode && isViewingLatest && !archivedAt && !isAgentRunning && viewMode !== 'edit',
+					{
+						chatId,
+						storySlug: resolvedStorySlug,
+						storyTitle,
+						storyCode,
+					},
+					viewMode === 'preview' ? (
+						<StoryPreview
+							code={storyCode}
+							cacheSchedule={cacheSchedule}
+							queryData={queryData ?? null}
+							chatId={chatId}
+							versionKey={`${currentVersionNumber}-${cachedAt ?? ''}`}
+						/>
+					) : viewMode === 'edit' ? (
+						<StoryEditor code={storyCode} editorRef={tiptapEditorRef} onSave={handleSave} />
+					) : (
+						<StoryCodeView code={storyCode} />
+					),
 				)}
 			</div>
 
@@ -209,4 +219,24 @@ export function StoryViewer({ chatId, storySlug, isReadonlyMode: readonlyProp }:
 	}
 
 	return <ReadonlyAgentMessagesProvider messages={chatMessages}>{content}</ReadonlyAgentMessagesProvider>;
+}
+
+function renderWithEditProvider(
+	enabled: boolean,
+	params: { chatId: string; storySlug: string; storyTitle: string; storyCode: string },
+	children: React.ReactNode,
+) {
+	if (!enabled) {
+		return children;
+	}
+	return (
+		<StoryChartEditProvider
+			chatId={params.chatId}
+			storySlug={params.storySlug}
+			storyTitle={params.storyTitle}
+			storyCode={params.storyCode}
+		>
+			{children}
+		</StoryChartEditProvider>
+	);
 }
