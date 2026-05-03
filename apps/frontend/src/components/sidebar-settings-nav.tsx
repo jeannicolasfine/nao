@@ -48,6 +48,10 @@ const settingsNavItems: NavItem[] = [
 		disabled: ({ isViewer }) => isViewer,
 	},
 	{
+		label: 'MCP Endpoint',
+		to: '/settings/mcp-endpoint',
+	},
+	{
 		label: 'Observability',
 		type: 'divider',
 		visible: ({ isAdmin }) => isAdmin,
